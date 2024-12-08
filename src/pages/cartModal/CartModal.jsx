@@ -17,14 +17,48 @@ const CartModal = ({ isOpen, onClose }) => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  if (!isOpen) return null;
-
   const calculateTotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.quantity * item.price,
       0
     ).toFixed(2);
   };
+
+  const handlePurchase = (e) => {
+    e.preventDefault();
+    const total = calculateTotal();
+  
+    const purchaseData = {
+      items: cartItems, // Asegúrate de que `cartItems` contenga todos los campos necesarios
+      total,
+    };
+  
+    fetch("http://localhost:3550/api/carrito/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(purchaseData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al guardar la compra");
+        }
+        return response.json();
+      })
+      .then((savedPurchase) => {
+        alert(`Compra realizada correctamente. Total: $${total}`);
+        setCartItems([]);
+        localStorage.removeItem("cart");
+        onClose();
+      })
+      .catch((error) => {
+        alert(`Error al realizar la compra: ${error.message}`);
+      });
+  };
+  
+
+  if (!isOpen) return null;
 
   return (
     <div className="cart-modal">
@@ -43,7 +77,7 @@ const CartModal = ({ isOpen, onClose }) => {
                   <div>
                     <strong>{item.name}</strong>
                     <p>
-                      Precio: ${item.price.toFixed(2)} | Cantidad: {item.quantity} | 
+                      Precio: ${item.price.toFixed(2)} | Cantidad: {item.quantity} |
                       Subtotal: ${(item.quantity * item.price).toFixed(2)}
                     </p>
                   </div>
@@ -57,6 +91,9 @@ const CartModal = ({ isOpen, onClose }) => {
               ))}
             </ul>
             <h3>Total: ${calculateTotal()}</h3>
+            <button className="purchase-button" onClick={handlePurchase}>
+              Comprar
+            </button>
           </div>
         )}
       </div>
