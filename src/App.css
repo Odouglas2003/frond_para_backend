@@ -1,0 +1,17 @@
+#root {
+  min-height: 100vh; 
+}/* Altura mínima para toda la ventana */
+
+.main{
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column; /* Alineación vertical */
+  align-items: center; /* Centrar horizontalmente */
+  min-height: 100vh; /* Altura mínima para toda la ventana */
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+  overflow-x: hidden; /* Evita el desbordamiento horizontal */
+}
